@@ -2,15 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 #include <ctype.h>
+#include <assert.h>
+
+// checkGuess(guess, answer) validates if the guessed word was correct. If not correct,
+//   provides a clue as to which letters, if any, are in the correct position or 
+//   incorrect position
+// effects: creates output
+// requires: guess and answer are not null
 
 bool checkGuess(char* guess, const char* answer) {
-    // check if word is correct
+    assert(guess);
+    assert(answer);
     if (strcasecmp(guess, answer) == 0) {
         return true;
     }
 
-    // if not correct, give clues
     char clues[6] = {'-', '-', '-', '-', '-', '\0'};
 
     // check if letter(s) in correct place or in word
@@ -34,20 +42,25 @@ bool checkGuess(char* guess, const char* answer) {
     return false;
 }
 
+
+
+// wordleRound(correctWord) Plays a round of Wordle, allowing the user up to 6 guesses to guess the word correctly
+// effects: allocates and frees memory
+// requires: correctWord is not null 
+
 void wordleRound(const char* correctWord) {
+    assert(correctWord);
     int numGuesses = 0;
     bool guessedWord = false;
     char* guess = malloc(6 * sizeof(char));
 
-    while (numGuesses < 6 && !guessedWord) {
-        printf("Enter a 5 letter word and hit enter");
-        do {
-            fgets(guess, 6, stdin);
-            guess[strcspn( guess, "\n" )] = '\0';
-        } while (strlen(guess) != 5);
+    while (numGuesses < 5 && !guessedWord) {
+        printf("Enter a 5 letter word and hit enter: ");
+        scanf("%s", guess);
         numGuesses++;
+        
         printf("Your guess was %s\n", guess);
-
+        
         guessedWord = checkGuess(guess, correctWord);
         if (guessedWord) {
             printf("Congratulations! You guess correctly in %d guesses!\n", numGuesses);
@@ -55,7 +68,8 @@ void wordleRound(const char* correctWord) {
         if (numGuesses == 6) {
             printf("Sorry, you used up all your guesses. The correct word was %s!\n", correctWord);
         }
+         
     }
+    
     free(guess);
 }
-
